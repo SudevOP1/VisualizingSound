@@ -1,3 +1,10 @@
 
 # virtual envs
 venv/
+
+# python cache
+__pycache__
+
+# unnecessary files & folders
+audio_files/
+img_files/
