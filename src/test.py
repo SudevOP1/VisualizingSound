@@ -92,9 +92,24 @@ def test_visualize_frequencies(audio_filepath: str, img_filepath: str) -> None:
         print(f"img_file created: {result_path}")
 
 
+def test_visualize_spectogram(audio_filepath: str, img_filepath: str) -> None:
+
+    result_ok, result_path = visualize_spectogram(
+        audio_filepath,
+        img_filepath,
+        replace=True,
+        max_frequency=5000,
+    )
+    if not result_ok:
+        print(f"something went wrong: {result_path}")
+    else:
+        print(f"img_file created: {result_path}")
+
+
 if __name__ == "__main__":
     # test_read_wav()
     # test_write_simple_wav()
-    test_create_audio_file("audio_files/new_audio.wav")
-    test_visualize_amplitude("audio_files/new_audio.wav", "img_files/amplitude_img.png")
-    test_visualize_frequencies("audio_files/new_audio.wav", "img_files/frequencies_img.png")
+    # test_create_audio_file("audio_files/new_audio.wav")
+    # test_visualize_amplitude("audio_files/new_audio.wav", "img_files/amplitude_img.png")
+    # test_visualize_frequencies("audio_files/new_audio.wav", "img_files/frequencies_img.png")
+    test_visualize_spectogram("audio_files/audio.wav", "img_files/spectogram.png")

@@ -1,5 +1,6 @@
 import wave, os, struct, traceback
 import numpy as np
+import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw
 
 
@@ -217,7 +218,7 @@ def visualize_frequencies(
         img = Image.new("RGB", (img_width, img_height), bg_color)
         draw = ImageDraw.Draw(img)
 
-        # x-axis position (MOVED UP — critical fix)
+        # x-axis position
         x_axis_y = img_height - y_padding
 
         # frequency -> x-mapping
@@ -251,6 +252,65 @@ def visualize_frequencies(
             draw.text((x - 15, x_axis_y + 8), f"{freq}", fill=axis_color)
 
         img.save(img_filepath)
+        return True, img_filepath
+
+    except Exception:
+        return False, traceback.format_exc()
+
+
+def visualize_spectogram(
+    audio_filepath: str = None,
+    img_filepath: str = None,
+    replace: bool = False,
+    img_width: int = 1280,
+    img_height: int = 720,
+    max_frequency: int = 10000,
+) -> tuple[bool, str]:
+    """
+    returns success bool and a spectogram img filepath or error string
+    extracted from a .wav audio file using FFT
+    """
+    try:
+
+        if not audio_filepath or not os.path.exists(audio_filepath):
+            return False, "audio not found"
+        if not img_filepath:
+            img_filepath = os.path.splitext(audio_filepath)[0] + ".png"
+        img_filepath = resolve_filepath(img_filepath, replace=replace)
+
+        with wave.open(audio_filepath, "rb") as audio_file:
+            n_channels = audio_file.getnchannels()
+            framerate = audio_file.getframerate()
+            n_frames = audio_file.getnframes()
+            frames = audio_file.readframes(n_frames)
+
+        # unpack assuming 16-bit PCM
+        samples = np.array(
+            struct.unpack("<" + "h" * (len(frames) // 2), frames),
+            dtype=np.float32,
+        )
+
+        # stereo -> mono
+        if n_channels == 2:
+            samples = samples[::2]
+
+        # matplotlib figure size
+        plt.figure(figsize=(img_width / 100, img_height / 100), dpi=100)
+
+        # spectogram
+        pxx, freqs, bin, im = plt.specgram(
+            samples,
+            Fs=framerate,
+            NFFT=2048,
+            noverlap=1024,
+            cmap="Greys",
+        )
+
+        plt.ylim(0, max_frequency)
+        plt.tight_layout()
+        plt.savefig(img_filepath)
+        plt.close()
+
         return True, img_filepath
 
     except Exception:
