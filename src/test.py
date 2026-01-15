@@ -5,21 +5,49 @@ from helpers import *
 def test_read_wav() -> None:
     filepath = "audio_files/audio.wav"
     with wave.open(filepath, "r") as f:
-        print(f"[test_read_wav] filepath: {filepath}")
-
-        print(f"[test_read_wav] f.getnchannels(): {f.getnchannels()}")
-        print(f"[test_read_wav] getsampwidth(): {f.getsampwidth()}")
-        print(f"[test_read_wav] getframerate(): {f.getframerate()}")
-        print(f"[test_read_wav] getnframes(): {f.getnframes()}")
-        print(f"[test_read_wav] getcomptype(): {f.getcomptype()}")
-        print(f"[test_read_wav] getcompname(): {f.getcompname()}")
-        print(f"[test_read_wav] getparams(): {f.getparams()}")
-        print(f"[test_read_wav] getmarkers(): {f.getmarkers()}")
-        # print(f"[test_read_wav] getmark(id): {f.getmark(id)}")
-        # print(f"[test_read_wav] readframes(n): {f.readframes(n)}")
-        print(f"[test_read_wav] rewind(): {f.rewind()}")
-        # print(f"[test_read_wav] setpos(pos): {f.setpos(pos)}")
-        print(f"[test_read_wav] tell(): {f.tell()}")
+        log(msg=f"filepath: {filepath}", func_name="test_read_wav", color="green")
+        log(
+            msg=f"f.getnchannels(): {f.getnchannels()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getsampwidth(): {f.getsampwidth()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getframerate(): {f.getframerate()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getnframes(): {f.getnframes()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getcomptype(): {f.getcomptype()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getcompname(): {f.getcompname()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getparams(): {f.getparams()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(
+            msg=f"getmarkers(): {f.getmarkers()}",
+            func_name="test_read_wav",
+            color="green",
+        )
+        log(msg=f"rewind(): {f.rewind()}", func_name="test_read_wav", color="green")
+        log(msg=f"tell(): {f.tell()}", func_name="test_read_wav", color="green")
 
 
 def test_write_simple_wav() -> None:
@@ -61,9 +89,17 @@ def test_create_audio_file(audio_filepath: str) -> None:
         replace=True,
     )
     if not result_ok:
-        print(f"[test_create_audio_file] something went wrong: {result_path}")
+        log(
+            msg=f"something went wrong: {result_path}",
+            func_name="test_create_audio_file",
+            color="green",
+        )
     else:
-        print(f"[test_create_audio_file] audio_file created: {result_path}")
+        log(
+            msg=f"audio_file created: {result_path}",
+            func_name="test_create_audio_file",
+            color="green",
+        )
 
 
 def test_visualize_amplitude(audio_filepath: str, img_filepath: str) -> None:
@@ -74,9 +110,17 @@ def test_visualize_amplitude(audio_filepath: str, img_filepath: str) -> None:
         replace=True,
     )
     if not result_ok:
-        print(f"[test_visualize_amplitude] something went wrong: {result_path}")
+        log(
+            msg=f"something went wrong: {result_path}",
+            func_name="test_visualize_amplitude",
+            color="green",
+        )
     else:
-        print(f"[test_visualize_amplitude] img_file created: {result_path}")
+        log(
+            msg=f"img_file created: {result_path}",
+            func_name="test_visualize_amplitude",
+            color="green",
+        )
 
 
 def test_visualize_frequencies(audio_filepath: str, img_filepath: str) -> None:
@@ -87,9 +131,17 @@ def test_visualize_frequencies(audio_filepath: str, img_filepath: str) -> None:
         replace=True,
     )
     if not result_ok:
-        print(f"[test_visualize_frequencies] something went wrong: {result_path}")
+        log(
+            msg=f"something went wrong: {result_path}",
+            func_name="test_visualize_frequencies",
+            color="green",
+        )
     else:
-        print(f"[test_visualize_frequencies] img_file created: {result_path}")
+        log(
+            msg=f"img_file created: {result_path}",
+            func_name="test_visualize_frequencies",
+            color="green",
+        )
 
 
 def test_visualize_spectogram(audio_filepath: str, img_filepath: str) -> None:
@@ -101,9 +153,17 @@ def test_visualize_spectogram(audio_filepath: str, img_filepath: str) -> None:
         max_frequency=5000,
     )
     if not result_ok:
-        print(f"[test_visualize_spectogram] something went wrong: {result_path}")
+        log(
+            msg=f"something went wrong: {result_path}",
+            func_name="test_visualize_spectogram",
+            color="green",
+        )
     else:
-        print(f"[test_visualize_spectogram] img_file created: {result_path}")
+        log(
+            msg=f"img_file created: {result_path}",
+            func_name="test_visualize_spectogram",
+            color="green",
+        )
 
 
 def test_fft(
@@ -153,9 +213,17 @@ def test_fft(
         replace=True,
     )
     if not audio_path_ok:
-        print(f"[test_fft] something went wrong in creating audio file: {audio_path}")
+        log(
+            msg=f"something went wrong in creating audio file: {audio_path}",
+            func_name="test_fft",
+            color="green",
+        )
         return
-    print(f"[test_fft] audio_file created: {audio_path}")
+    log(
+        msg=f"audio_file created: {audio_path}",
+        func_name="test_fft",
+        color="green",
+    )
 
     # calc max_freq for visualization
     max_freq_candidates = []
@@ -173,11 +241,17 @@ def test_fft(
         max_frequency=max_freq,
     )
     if not spectogram_img_path_ok:
-        print(
-            f"[test_fft] something went wrong in creating spectogram img: {spectogram_img_path}"
+        log(
+            msg=f"something went wrong in creating spectogram img: {spectogram_img_path}",
+            func_name="test_fft",
+            color="green",
         )
     else:
-        print(f"[test_fft] img_file created: {spectogram_img_path}")
+        log(
+            msg=f"img_file created: {spectogram_img_path}",
+            func_name="test_fft",
+            color="green",
+        )
 
     # creating frequencies img
     frequencies_img_path_ok, frequencies_img_path = visualize_frequencies(
@@ -186,11 +260,17 @@ def test_fft(
         replace=True,
     )
     if not frequencies_img_path_ok:
-        print(
-            f"[test_fft] something went wrong in creating frequencies img: {frequencies_img_path}"
+        log(
+            msg=f"something went wrong in creating frequencies img: {frequencies_img_path}",
+            func_name="test_fft",
+            color="green",
         )
     else:
-        print(f"[test_fft] img_file created: {frequencies_img_path}")
+        log(
+            msg=f"img_file created: {frequencies_img_path}",
+            func_name="test_fft",
+            color="green",
+        )
 
     # creating amplitudes img
     amplitudes_img_path_ok, amplitudes_img_path = visualize_amplitude(
@@ -199,22 +279,28 @@ def test_fft(
         replace=True,
     )
     if not amplitudes_img_path_ok:
-        print(
-            f"[test_fft] something went wrong in creating amplitudes img: {amplitudes_img_path}"
+        log(
+            msg=f"something went wrong in creating amplitudes img: {amplitudes_img_path}",
+            func_name="test_fft",
+            color="green",
         )
     else:
-        print(f"[test_fft] img_file created: {amplitudes_img_path}")
+        log(
+            msg=f"img_file created: {amplitudes_img_path}",
+            func_name="test_fft",
+            color="green",
+        )
 
 
 if __name__ == "__main__":
 
     def test1():
-        print("test1:")
+        print(f"{COLORS["yellow"]}test1:{COLORS["reset"]}")
         test_read_wav()
         test_write_simple_wav()
 
     def test2():
-        print("test2:")
+        print(f"{COLORS["yellow"]}test2:{COLORS["reset"]}")
         test_create_audio_file("audio_files/new_audio.wav")
         test_visualize_amplitude(
             "audio_files/new_audio.wav", "img_files/new_audio_amplitude.png"
@@ -227,7 +313,7 @@ if __name__ == "__main__":
         )
 
     def test3():
-        print("test3:")
+        print(f"{COLORS["yellow"]}test3:{COLORS["reset"]}")
         test_fft(
             audio_filepath="audio_files/fft_test_audio.wav",
             spectogram_img_filepath="img_files/fft_test_spectogram.png",

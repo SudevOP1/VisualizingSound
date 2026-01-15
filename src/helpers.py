@@ -3,6 +3,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+COLORS = {
+    "reset": "\033[39m\033[49m",
+    "green": "\033[32m",
+    "yellow": "\033[33m",
+    "blue": "\033[34m",
+}
+
+
+def log(*, msg: str, func_name: str = "", color: str = "reset") -> None:
+    if color not in COLORS.keys():
+        raise ValueError(
+            f"color '{color}' not allowed,\navailable colors={list(COLORS.keys())}"
+        )
+    color = COLORS[color]
+    func_name = f"[{func_name}] " if len(func_name) != 0 else ""
+    reset = COLORS["reset"]
+    print(f"{color}{func_name}{reset}{msg}")
+
+
 def map_num(num: float, x1: float, x2: float, x3: float, x4: float) -> float:
     """linearly maps a numeric value from range [x1, x2] to range [x3, x4]"""
     if x1 == x2:

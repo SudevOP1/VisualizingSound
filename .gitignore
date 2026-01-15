@@ -8,3 +8,6 @@ __pycache__
 # unnecessary files & folders
 audio_files/
 img_files/
+
+# tests
+tests/
