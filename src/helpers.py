@@ -1,7 +1,6 @@
 import wave, os, struct, traceback, math, cmath
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image, ImageDraw
 
 
 def map_num(num: float, x1: float, x2: float, x3: float, x4: float) -> float:
@@ -146,20 +145,13 @@ def visualize_amplitude(
     audio_filepath: str = None,
     img_filepath: str = None,
     replace: bool = False,
-    img_width: int = 1280,
-    img_height: int = 720,
-    x_padding: int = 100,
-    y_padding: int = 100,
-    bg_color: tuple[int] = (0, 0, 0),  # black
-    wave_color: tuple[int] = (0, 200, 0),  # green
 ) -> tuple[bool, str]:
     """
     generates visualization of amplitude of an audio,
     returns success bool and actual filepath string or error string
     """
-    try:
 
-        # resolving filepaths
+    try:
         if not audio_filepath or not os.path.exists(audio_filepath):
             return False, "audio not found"
         if not img_filepath:
@@ -174,38 +166,21 @@ def visualize_amplitude(
 
         samples = struct.unpack("<" + "h" * (len(frames) // 2), frames)
 
+        # convert stereo -> mono
         if n_channels == 2:
             samples = samples[::2]
 
-        # drawable area
-        drawable_width = img_width - 2 * x_padding
-        drawable_height = img_height - 2 * y_padding
-
-        # downsample to drawable width
-        step = max(1, len(samples) // drawable_width)
-        samples = samples[::step][:drawable_width]
-
+        # normalize
         max_amp = max(abs(s) for s in samples) or 1
+        samples = [s / max_amp for s in samples]
 
-        img_obj = Image.new("RGB", (img_width, img_height), bg_color)
-        draw_obj = ImageDraw.Draw(img_obj)
+        plt.figure()
+        plt.plot(samples)
+        plt.axhline(0, color="black")
+        plt.tight_layout()
+        plt.savefig(img_filepath)
+        plt.close()
 
-        mid_y = y_padding + drawable_height // 2
-        max_line_height = drawable_height // 2
-
-        for i, sample in enumerate(samples):
-            amplitude = abs(sample) / max_amp
-            line_height = int(amplitude * max_line_height)
-
-            x = x_padding + i
-
-            draw_obj.line(
-                (x, mid_y - line_height, x, mid_y + line_height),
-                fill=wave_color,
-                width=1,
-            )
-
-        img_obj.save(img_filepath)
         return True, img_filepath
 
     except Exception:
@@ -216,23 +191,10 @@ def visualize_frequencies(
     audio_filepath: str = None,
     img_filepath: str = None,
     replace: bool = False,
-    img_width: int = 1280,
-    img_height: int = 720,
-    x_padding: int = 100,
-    y_padding: int = 100,
-    bg_color: tuple[int] = (0, 0, 0),  # black
-    amp_color: tuple[int] = (0, 200, 0),  # green
-    axis_color: tuple[int] = (255, 255, 255),  # white
-    label_step: int = 500,
     max_frequency: int = 10000,
 ) -> tuple[bool, str]:
-    """
-    returns success bool and a mapping of frequency (Hz) -> amplitude (magnitude)
-    extracted from a .wav audio file using FFT
-    """
 
     try:
-
         if not audio_filepath or not os.path.exists(audio_filepath):
             return False, "audio not found"
         if not img_filepath:
@@ -245,51 +207,21 @@ def visualize_frequencies(
         if not frequency_amplitudes_ok:
             return False, frequency_amplitudes
 
-        # drawable area
-        drawable_width = img_width - 2 * x_padding
-        drawable_height = img_height - 2 * y_padding
+        freqs = []
+        amps = []
 
-        min_freq = 0
-        max_freq = max_frequency
-        max_amp = max(frequency_amplitudes.values()) or 1
-
-        img = Image.new("RGB", (img_width, img_height), bg_color)
-        draw = ImageDraw.Draw(img)
-
-        # x-axis position
-        x_axis_y = img_height - y_padding
-
-        # frequency -> x-mapping
-        def freq_to_x(freq: int) -> int:
-            return x_padding + int(
-                (freq - min_freq) / (max_freq - min_freq) * drawable_width
-            )
-
-        # amplitude -> y-mapping
-        def amp_to_y(amp: int) -> int:
-            return x_axis_y - int((amp / max_amp) * drawable_height)
-
-        # frequency bars
         for freq, amp in frequency_amplitudes.items():
-            if min_freq <= freq <= max_freq:
-                x = freq_to_x(freq)
-                y = amp_to_y(amp)
-                draw.line((x, x_axis_y, x, y), fill=amp_color, width=1)
+            if 0 <= freq <= max_frequency:
+                freqs.append(freq)
+                amps.append(amp)
 
-        # x-axis
-        draw.line(
-            (x_padding, x_axis_y, img_width - x_padding, x_axis_y),
-            fill=axis_color,
-            width=1,
-        )
+        plt.figure()
+        plt.bar(freqs, amps, width=1.0)
+        plt.xlim(0, max_frequency)
+        plt.tight_layout()
+        plt.savefig(img_filepath)
+        plt.close()
 
-        # x-axis labels
-        for freq in range(0, max_freq + 1, label_step):
-            x = freq_to_x(freq)
-            draw.line((x, x_axis_y, x, x_axis_y + 5), fill=axis_color, width=1)
-            draw.text((x - 15, x_axis_y + 8), f"{freq}", fill=axis_color)
-
-        img.save(img_filepath)
         return True, img_filepath
 
     except Exception:

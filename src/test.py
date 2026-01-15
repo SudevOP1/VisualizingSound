@@ -108,14 +108,16 @@ def test_visualize_spectogram(audio_filepath: str, img_filepath: str) -> None:
 
 def test_fft(
     audio_filepath: str,
-    img_filepath: str,
+    spectogram_img_filepath: str,
+    frequencies_img_filepath: str,
+    amplitudes_img_filepath: str,
     sine_frequency_amplitudes: dict[int, int] = {},
     cosine_frequency_amplitudes: dict[int, int] = {},
     duration: float = 5.0,
 ) -> None:
     """
     creates an audio as a sum of sine and cosine waves of multiple frequencies
-    then applies fft on it and creates spectogram
+    then applies fft on it and creates spectogram, frequency, amplitude visualizations
     """
 
     # default sine freqs if both sine and cosine are passed empty
@@ -126,6 +128,7 @@ def test_fft(
     framerate = 44100
     num_samples = int(framerate * duration)
 
+    # calc samples
     samples: list[float] = []
     for i in range(num_samples):
         sample = 0.0
@@ -142,6 +145,7 @@ def test_fft(
         samples.append(sample)
     samples = tuple(samples)
 
+    # creating audio file
     audio_path_ok, audio_path = create_audio_file(
         audio_filepath,
         samples,
@@ -161,18 +165,45 @@ def test_fft(
         max_freq_candidates.append(max(cosine_frequency_amplitudes))
     max_freq = max(max_freq_candidates) + 500 if max_freq_candidates else 2000
 
-    img_path_ok, img_path = visualize_spectogram(
+    # creating spectogram img
+    spectogram_img_path_ok, spectogram_img_path = visualize_spectogram(
         audio_path,
-        img_filepath,
+        spectogram_img_filepath,
         replace=True,
         max_frequency=max_freq,
     )
-    if not img_path_ok:
+    if not spectogram_img_path_ok:
         print(
-            f"[test_visualize_spectogram] something went wrong in creating spectogram: {img_path}"
+            f"[test_fft] something went wrong in creating spectogram img: {spectogram_img_path}"
         )
     else:
-        print(f"[test_visualize_spectogram] img_file created: {img_path}")
+        print(f"[test_fft] img_file created: {spectogram_img_path}")
+
+    # creating frequencies img
+    frequencies_img_path_ok, frequencies_img_path = visualize_frequencies(
+        audio_path,
+        frequencies_img_filepath,
+        replace=True,
+    )
+    if not frequencies_img_path_ok:
+        print(
+            f"[test_fft] something went wrong in creating frequencies img: {frequencies_img_path}"
+        )
+    else:
+        print(f"[test_fft] img_file created: {frequencies_img_path}")
+
+    # creating amplitudes img
+    amplitudes_img_path_ok, amplitudes_img_path = visualize_amplitude(
+        audio_path,
+        amplitudes_img_filepath,
+        replace=True,
+    )
+    if not amplitudes_img_path_ok:
+        print(
+            f"[test_fft] something went wrong in creating amplitudes img: {amplitudes_img_path}"
+        )
+    else:
+        print(f"[test_fft] img_file created: {amplitudes_img_path}")
 
 
 if __name__ == "__main__":
@@ -197,6 +228,15 @@ if __name__ == "__main__":
 
     def test3():
         print("test3:")
-        test_fft("audio_files/fft_test_audio.wav", "img_files/fft_test_spectogram.png")
+        test_fft(
+            audio_filepath="audio_files/fft_test_audio.wav",
+            spectogram_img_filepath="img_files/fft_test_spectogram.png",
+            frequencies_img_filepath="img_files/fft_test_frequencies.png",
+            amplitudes_img_filepath="img_files/fft_test_amplitudes.png",
+            sine_frequency_amplitudes={
+                1000: 2000,
+                1001: 2000,
+            },
+        )
 
     test3()
