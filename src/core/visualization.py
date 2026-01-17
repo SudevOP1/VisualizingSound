@@ -56,7 +56,9 @@ def visualize_frequencies(
     audio_filepath: str = None,
     img_filepath: str = None,
     replace: bool = False,
-    max_frequency: int = 10000,
+    min_frequency: int = 0,
+    max_frequency: int = 5000,
+    hann_window: bool = True,
 ) -> tuple[bool, str]:
 
     try:
@@ -67,7 +69,8 @@ def visualize_frequencies(
         img_filepath = resolve_filepath(img_filepath, replace=replace)
 
         frequency_amplitudes_ok, frequency_amplitudes = get_frequency_amplitudes(
-            audio_filepath
+            audio_filepath=audio_filepath,
+            hann_window=hann_window,
         )
         if not frequency_amplitudes_ok:
             return False, frequency_amplitudes
@@ -76,13 +79,15 @@ def visualize_frequencies(
         amps = []
 
         for freq, amp in frequency_amplitudes.items():
-            if 0 <= freq <= max_frequency:
+            if min_frequency <= freq <= max_frequency:
                 freqs.append(freq)
                 amps.append(amp)
+        max_amp = max(amps) if amps else 1
 
         plt.figure()
         plt.bar(freqs, amps, width=1.0)
-        plt.xlim(0, max_frequency)
+        plt.xlim(min_frequency, max_frequency)
+        plt.ylim(0, max_amp * 1.05)
         plt.tight_layout()
         plt.savefig(img_filepath)
         plt.close()

@@ -1,11 +1,5 @@
 from src.utils.logger import log
-from src.tests import (
-    test_create_audio_file,
-    test_visualize_amplitude,
-    test_visualize_frequencies,
-    test_visualize_spectogram,
-    test_fft,
-)
+from src.tests import *
 
 
 def test1_audio():
@@ -39,7 +33,7 @@ def test3_fft():
     log(msg="test3_fft", color="yellow")
 
     test_fft(
-        audio_filepath="src/assets/audio_files/fft_test_audio.wav",
+        audio_filepath="src/assets/audio_files/beat_frequency_audio.wav",
         spectogram_img_filepath="src/assets/img_files/fft_test_spectogram.png",
         frequencies_img_filepath="src/assets/img_files/fft_test_frequencies.png",
         amplitudes_img_filepath="src/assets/img_files/fft_test_amplitudes.png",
@@ -51,5 +45,36 @@ def test3_fft():
     print("")
 
 
+def test4_hann_window():
+    print("")
+    log(msg="test4_hann_window", color="yellow")
+
+    audio_filepath = "src/assets/audio_files/beat_frequency_audio.wav"
+    samples = generate_wave_samples(
+        duration=1.0,  # 1 second for less calculation time
+        sine_frequency_amplitudes={
+            5: 2000,
+            6: 2000,
+        },
+    )
+    test_create_audio_file(audio_filepath=audio_filepath, samples=samples)
+
+    test_visualize_frequencies(
+        audio_filepath=audio_filepath,
+        img_filepath="src/assets/img_files/beat_frequency_visualization_without_hann_window.png",
+        hann_window=False,
+        min_frequency=0,
+        max_frequency=32,
+    )
+    test_visualize_frequencies(
+        audio_filepath=audio_filepath,
+        img_filepath="src/assets/img_files/beat_frequency_visualization_with_hann_window.png",
+        hann_window=True,
+        min_frequency=0,
+        max_frequency=32,
+    )
+    print("")
+
+
 if __name__ == "__main__":
-    test3_fft()
+    test4_hann_window()

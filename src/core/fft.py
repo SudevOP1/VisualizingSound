@@ -2,7 +2,11 @@ import wave, math, cmath, os, struct, traceback
 import numpy as np
 
 
-def apply_fft(samples: np.ndarray[np.float32], framerate: int) -> dict[float, float]:
+def apply_fft(
+    samples: np.ndarray[np.float32],
+    framerate: int,
+    hann_window: bool = True,
+) -> dict[float, float]:
     """
     applies discrete fft (discrete fast fourier transform / Cooley-Tukey Algo)
     returns a dict of frequency (Hz) -> amplitude (magnitude)
@@ -24,27 +28,43 @@ def apply_fft(samples: np.ndarray[np.float32], framerate: int) -> dict[float, fl
 
         return result
 
+    def apply_hann_window(samples: np.ndarray[np.float32]) -> np.ndarray[np.float32]:
+        n = len(samples)
+        w = samples.copy()
+
+        for i in range(n):
+            window = 0.5 * (1 - math.cos(2 * math.pi * (i / (n - 1.0))))
+            w[i] *= window
+
+        return w
+
     n = len(samples)
-    if n == 0:
+    if n < 2:
         return {}
+
+    if hann_window:
+        samples = apply_hann_window(samples)
 
     power = 1 << (n - 1).bit_length()
     padded = list(samples) + [0.0] * (power - n)
 
-    complex_signal = [complex(s, 0) for s in padded]
-    spectrum = fft(complex_signal)
+    spectrum = fft([complex(s, 0) for s in padded])
 
+    window_gain = 0.5 if hann_window else 1.0
     frequency_amplitudes: dict[float, float] = {}
 
     for k in range(1, len(spectrum) // 2):
         freq = k * framerate / len(spectrum)
-        amp = (2.0 / n) * abs(spectrum[k])
+        amp = (2.0 / n) * abs(spectrum[k]) / window_gain
         frequency_amplitudes[freq] = amp
 
     return frequency_amplitudes
 
 
-def get_frequency_amplitudes(audio_filepath: str) -> tuple[bool, dict[int, int]]:
+def get_frequency_amplitudes(
+    audio_filepath: str,
+    hann_window: bool = True,
+) -> tuple[bool, dict[int, int]]:
     """
     returns success bool and a mapping of frequency (Hz) -> amplitude (magnitude)
     extracted from a .wav audio file using FFT
@@ -72,7 +92,11 @@ def get_frequency_amplitudes(audio_filepath: str) -> tuple[bool, dict[int, int]]
             samples = samples[::2]
 
         # FFT
-        frequency_amplitudes = apply_fft(samples, framerate)
+        frequency_amplitudes = apply_fft(
+            samples=samples,
+            framerate=framerate,
+            hann_window=hann_window,
+        )
         frequency_amplitudes_binned = {}
         for freq, amp in frequency_amplitudes.items():
             rounded_freq = int(round(freq))

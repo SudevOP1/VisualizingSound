@@ -36,13 +36,13 @@ def test_create_audio_file(audio_filepath: str, samples: tuple[float] = ()) -> N
     if not result_ok:
         log(
             msg=f"something went wrong: {result_path}",
-            func_name="test_create_audio_file",
+            prepend="create_audio_file",
             color="green",
         )
     else:
         log(
             msg=f"audio_file created: {result_path}",
-            func_name="test_create_audio_file",
+            prepend="create_audio_file",
             color="green",
         )
 
@@ -62,13 +62,13 @@ def test_visualize_amplitude(
     if not result_ok:
         log(
             msg=f"something went wrong: {result_path}",
-            func_name="test_visualize_amplitude",
+            prepend="visualize_amplitude",
             color="green",
         )
     else:
         log(
             msg=f"img_file created: {result_path}",
-            func_name="test_visualize_amplitude",
+            prepend="visualize_amplitude",
             color="green",
         )
 
@@ -77,24 +77,30 @@ def test_visualize_frequencies(
     audio_filepath: str,
     img_filepath: str,
     replace: bool = True,
+    min_frequency: int = 0,
+    max_frequency: int = 5000,
+    hann_window: bool = True,
 ) -> None:
 
     result_ok, result_path = visualize_frequencies(
         audio_filepath,
         img_filepath,
         replace=replace,
+        min_frequency=min_frequency,
+        max_frequency=max_frequency,
+        hann_window=hann_window,
     )
 
     if not result_ok:
         log(
             msg=f"something went wrong: {result_path}",
-            func_name="test_visualize_frequencies",
+            prepend="visualize_frequencies",
             color="green",
         )
     else:
         log(
             msg=f"img_file created: {result_path}",
-            func_name="test_visualize_frequencies",
+            prepend="visualize_frequencies",
             color="green",
         )
 
@@ -118,13 +124,13 @@ def test_visualize_spectogram(
     if not result_ok:
         log(
             msg=f"something went wrong: {result_path}",
-            func_name="test_visualize_spectogram",
+            prepend="visualize_spectogram",
             color="green",
         )
     else:
         log(
             msg=f"img_file created: {result_path}",
-            func_name="test_visualize_spectogram",
+            prepend="visualize_spectogram",
             color="green",
         )
 
@@ -163,13 +169,13 @@ def test_fft(
     if not audio_path_ok:
         log(
             msg=f"something went wrong in creating audio file: {audio_path}",
-            func_name="test_fft",
+            prepend="create_audio_file",
             color="green",
         )
         return
     log(
         msg=f"audio_file created: {audio_path}",
-        func_name="test_fft",
+        prepend="create_audio_file",
         color="green",
     )
 
