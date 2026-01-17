@@ -65,5 +65,5 @@ python -m main
 
 ## 📌 Notes
 
-- Audio files must be 16-bit PCM .wav
+- Audio files must be 16-bit PCM `.wav`
 - Paths are resolved relative to project root
