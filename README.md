@@ -30,8 +30,8 @@ VisualizingSound/
     │   └── logger.py         # colored logging
     │
     ├── assets/
-    │   ├── audio_files/      # input & generated .wav files
-    │   └── img_files/        # generated visualization images
+    │   ├── audio_files/      # .wav files
+    │   └── img_files/        # .png files
     │
     └── tests.py              # tests for audio & visualization
 ```

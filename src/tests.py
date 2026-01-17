@@ -104,6 +104,7 @@ def test_visualize_spectogram(
     img_filepath: str,
     replace: bool = True,
     max_frequency: int = 5000,
+    plot_decibels: bool = True,
 ) -> None:
 
     result_ok, result_path = visualize_spectogram(
@@ -111,6 +112,7 @@ def test_visualize_spectogram(
         img_filepath,
         replace=replace,
         max_frequency=max_frequency,
+        plot_decibels=plot_decibels,
     )
 
     if not result_ok:
@@ -135,6 +137,7 @@ def test_fft(
     sine_frequency_amplitudes: dict[int, int] = {},
     cosine_frequency_amplitudes: dict[int, int] = {},
     duration: float = 5.0,
+    plot_decibels: bool = True,
 ) -> None:
     """
     creates an audio as a sum of sine and cosine waves of multiple frequencies
@@ -183,6 +186,7 @@ def test_fft(
         audio_filepath=audio_path,
         img_filepath=spectogram_img_filepath,
         max_frequency=max_freq,
+        plot_decibels=plot_decibels,
     )
 
     # creating frequencies img

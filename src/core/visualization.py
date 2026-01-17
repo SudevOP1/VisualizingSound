@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import os, traceback, struct, wave
+import os, traceback, struct, wave, math
 
 from ..utils.helpers import resolve_filepath
 from .fft import get_frequency_amplitudes
@@ -100,6 +100,7 @@ def visualize_spectogram(
     img_width: int = 1280,
     img_height: int = 720,
     max_frequency: int = 10000,
+    plot_decibels: bool = True,
 ) -> tuple[bool, str]:
     """
     returns success bool and a spectogram img filepath or error string
@@ -138,6 +139,7 @@ def visualize_spectogram(
             Fs=framerate,
             NFFT=2048,
             noverlap=1024,
+            scale="dB" if plot_decibels else "linear",
             cmap="Greys",
         )
 
