@@ -38,7 +38,7 @@ def apply_fft(samples: np.ndarray[np.float32], framerate: int) -> dict[float, fl
 
     for k in range(1, len(spectrum) // 2):
         freq = k * framerate / len(spectrum)
-        amp = abs(spectrum[k])
+        amp = (2.0 / n) * abs(spectrum[k])
         frequency_amplitudes[freq] = amp
 
     return frequency_amplitudes
@@ -73,11 +73,15 @@ def get_frequency_amplitudes(audio_filepath: str) -> tuple[bool, dict[int, int]]
 
         # FFT
         frequency_amplitudes = apply_fft(samples, framerate)
-        frequency_amplitudes_ints = {}
-        for key, value in frequency_amplitudes.items():
-            frequency_amplitudes_ints[int(round(key))] = int(value)
+        frequency_amplitudes_binned = {}
+        for freq, amp in frequency_amplitudes.items():
+            rounded_freq = int(round(freq))
+            frequency_amplitudes_binned[rounded_freq] = max(
+                frequency_amplitudes_binned.get(rounded_freq, 0.0),
+                amp,
+            )
 
-        return True, frequency_amplitudes_ints
+        return True, frequency_amplitudes_binned
 
     except Exception:
         return False, traceback.format_exc()
