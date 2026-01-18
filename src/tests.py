@@ -135,74 +135,41 @@ def test_visualize_spectogram(
         )
 
 
-def test_fft(
+def test_visualizations(
     audio_filepath: str,
-    spectogram_img_filepath: str,
-    frequencies_img_filepath: str,
-    amplitudes_img_filepath: str,
-    sine_frequency_amplitudes: dict[int, int] = {},
-    cosine_frequency_amplitudes: dict[int, int] = {},
-    duration: float = 5.0,
-    plot_decibels: bool = True,
+    replace: bool = True,
+    frequencies_img_filepath: str | None = None,
+    amplitudes_img_filepath: str | None = None,
+    spectogram_img_filepath: str | None = None,
+    spectogram_max_freq: int = 5000,
+    spectogram_plot_decibels: bool = True,
 ) -> None:
     """
-    creates an audio as a sum of sine and cosine waves of multiple frequencies
-    then applies fft on it and creates spectogram, frequency, amplitude visualizations
+    creates spectogram, frequency, amplitude visualizations
     """
 
-    # generating samples
-    framerate = 44100
-    samples = generate_wave_samples(
-        sine_frequency_amplitudes=sine_frequency_amplitudes,
-        cosine_frequency_amplitudes=cosine_frequency_amplitudes,
-        framerate=framerate,
-        duration=duration,
-    )
-
-    # creating audio file
-    audio_path_ok, audio_path = create_audio_file(
-        audio_filepath,
-        samples,
-        framerate,
-        replace=True,
-    )
-    if not audio_path_ok:
-        log(
-            msg=f"something went wrong in creating audio file: {audio_path}",
-            prepend="create_audio_file",
-            color="green",
+    # spectogram img
+    if spectogram_img_filepath is not None:
+        test_visualize_spectogram(
+            audio_filepath=audio_filepath,
+            img_filepath=spectogram_img_filepath,
+            replace=replace,
+            max_frequency=spectogram_max_freq,
+            plot_decibels=spectogram_plot_decibels,
         )
-        return
-    log(
-        msg=f"audio_file created: {audio_path}",
-        prepend="create_audio_file",
-        color="green",
-    )
 
-    # calc max_freq for visualization
-    max_freq_candidates = []
-    if sine_frequency_amplitudes:
-        max_freq_candidates.append(max(sine_frequency_amplitudes))
-    if cosine_frequency_amplitudes:
-        max_freq_candidates.append(max(cosine_frequency_amplitudes))
-    max_freq = max(max_freq_candidates) + 500 if max_freq_candidates else 2000
+    # frequencies img
+    if frequencies_img_filepath is not None:
+        test_visualize_frequencies(
+            audio_filepath=audio_filepath,
+            img_filepath=frequencies_img_filepath,
+            replace=replace,
+        )
 
-    # creating spectogram img
-    test_visualize_spectogram(
-        audio_filepath=audio_path,
-        img_filepath=spectogram_img_filepath,
-        max_frequency=max_freq,
-        plot_decibels=plot_decibels,
-    )
-
-    # creating frequencies img
-    test_visualize_frequencies(
-        audio_filepath=audio_path,
-        img_filepath=frequencies_img_filepath,
-    )
-
-    # creating amplitudes img
-    test_visualize_amplitude(
-        audio_filepath=audio_path,
-        img_filepath=amplitudes_img_filepath,
-    )
+    # amplitudes img
+    if amplitudes_img_filepath is not None:
+        test_visualize_amplitude(
+            audio_filepath=audio_filepath,
+            img_filepath=amplitudes_img_filepath,
+            replace=replace,
+        )
