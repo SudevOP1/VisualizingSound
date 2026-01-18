@@ -61,6 +61,12 @@ pip install -r requirements.txt
 python -m main
 ```
 
+### 4. Clean unnecessary files using `cleaner.py`
+
+```powershell
+python -m cleaner
+```
+
 <br>
 
 ## 📌 Notes
